@@ -6,31 +6,60 @@ findkmersmismatches <- function(string, k, d) {
   maxcount <- 0
   maxpatterns <- vector('character')
 
+  df <- genperms(k)
+
+  print("Got all the permutations.")
+
   for(i in 1:(strLength - k + 1)) {
     pattern <- substring(string, i, (i + k - 1))
-    print(pattern)
+    #print(pattern)
     #patterns <- permutestring2(pattern, d)$strng
-    patterns <- permutestring3(pattern, d)$strng    
-    for (j in 1:length(patterns)) {
-      curpattern <- patterns[j]
-      count <- countd(string, curpattern, d)[[1]]
-      if (count == maxcount) {
-        maxpatterns <- c(maxpatterns, curpattern)
-      }
-      else if(count > maxcount) {
-        print(paste("New count is ", count, sep=""))
-        maxcount = count
-        maxpatterns <- vector('character')
-        maxpatterns <- c(maxpatterns, curpattern)
-        print(maxpatterns)
-      }
-      
-    } ## End for (j in 1:length(patterns))
-    
-  } ## End for (i in 1:(strLength - k + 1))
+    #patterns <- permutestring3(pattern, d)$strng
+    #patterns <- permutestring4(df, pattern, d)$strng
+    #patterns <- applyfindhamming(df, pattern, d)$strng
+    ## Call Hamming Distance function to see how many of the possible permutations are within the
+    ## specified Hamming Distance.
+    df$hamming <- sapply(df$strng, function(x) {findhamming(x, pattern)})
+    patterns <- df[df$hamming <= d, ]$strng
 
-  return(unique(maxpatterns))
+    #print(head(patterns))
+    
+  ##   for (j in 1:length(patterns)) {
+  ##     curpattern <- patterns[j]
+  ##     #count <- countd(string, curpattern, d)[[1]]
+  ##     count <- findnummatches(string, curpattern)
+  ##     if (count == maxcount) {
+  ##       maxpatterns <- c(maxpatterns, curpattern)
+  ##     }
+  ##     else if(count > maxcount) {
+  ##       #print(paste("New count is ", count, sep=""))
+  ##       maxcount = count
+  ##       maxpatterns <- vector('character')
+  ##       maxpatterns <- c(maxpatterns, curpattern)
+  ##       #print(maxpatterns)
+  ##     }
+      
+  ##   } ## End for (j in 1:length(patterns))
+    
+    } ## End for (i in 1:(strLength - k + 1))
+
+  ## return(unique(maxpatterns))
+
+    print(head(patterns))
 }
+
+
+
+findnummatches <- function(string, sequence) {
+  match <- gregexpr(paste("(?=", sequence, ")", sep=""), string, perl=TRUE)
+  if(match[[1]][1] == -1)
+    nmatches <- 0
+  else
+    nmatches <- length(match[[1]])
+  return(nmatches)
+}
+
+
 
 
 countd <- function(string, pattern, d) {
@@ -45,7 +74,7 @@ countd <- function(string, pattern, d) {
   for(i in 1:(strLength - patLength + 1))
     {
     teststring <- substring(string, i, i + (patLength - 1))
-    print(teststring)
+    #print(teststring)
     hamdist <- findhamming(teststring, pattern)
     if (hamdist <= d)
       {
@@ -64,6 +93,41 @@ countd <- function(string, pattern, d) {
   
 }
 
+
+charequal <- function(char1, char2) {
+  ## Return TRUE if char1 == char2 and FALSE otherwise.
+  if (char1 != char2)
+    count <- 1
+  else
+    count <- 0
+  #print(count)
+  return(count)
+}
+
+
+findhamming1 <- function(string1, string2) {
+  str1split <- strsplit(string1, NULL)[[1]]
+  str2split <- strsplit(string2, NULL)[[1]]
+  print(str1split)
+  counts <- rep(0, length(str1split))
+  print(counts)
+  df <- cbind(str1split, str2split, counts)
+  
+  #mapply(function(x, y) { counts <- counts + charequal(x, y); print(counts); return(counts)}, str1split, str2split)
+  #mapply(function(x, y, z) { z <- z + charequal(x, y); print(counts)}, str1split, str2split, counts)
+  #mapply(function(x, y) { print(charequal(x, y))}, str1split, str2split)
+  #mapply(function(x, y, z) { z <- charequal(x, y); print(z)}, str1split, str2split, counts)
+
+  counts <- mapply(function(x, y) {charequal(x, y)}, str1split, str2split)  
+  
+  #mapply(function(x, y) { print(paste("x = ", x, " y = ", y, sep=""))}, str1split, str2split)
+  #apply(df, 1, function(x) { x$counts <- charequal(x$str1split, x$str2split) })
+  #df$counts <- apply(df, 1, charequal)
+  #sapply(df, function(x) { x$counts <- charequal(x$str1split, x$str2split) })  
+  #return(counts)
+  #return(sum(df$counts))
+  return(sum(counts))
+}
 
 
 findhamming <- function(string1, string2) {
@@ -94,3 +158,112 @@ findhamming <- function(string1, string2) {
 
   return(count)
 }
+
+
+
+
+foo <- function(dfrow) {
+  ## Paste together the column values in a row of a data frame.
+  #stringres <- sapply(1:ncol(dfrow), paste0(dfrow, collapse=""))
+  stringres <- paste0(dfrow, collapse="")
+  return(stringres)
+}
+
+
+
+genperms <- function(k) {
+  ## Generate all permutations of length k for a given alphabet.
+
+  ## Assuming an alphabet here of {"A", "C", "G", "T"}
+  alphabet = c('A', 'C', 'G', 'T')
+
+  #patLength <- nchar(pattern)
+  vects <- vector('character')
+
+  for (i in 1:k) {
+    vectA <- rep("A", 4^(k - i))
+    vectC <- rep("C", 4^(k - i))
+    vectG <- rep("G", 4^(k - i))
+    vectT <- rep("T", 4^(k - i))
+    vect <- c(vectA, vectC, vectG, vectT)
+    vects <-cbind(vects, vect)
+  }
+
+  ## for (i in 1:patLength) {
+  ##   vectA <- rep("A", 4^(patLength - i))
+  ##   vectC <- rep("C", 4^(patLength - i))
+  ##   vectG <- rep("G", 4^(patLength - i))
+  ##   vectT <- rep("T", 4^(patLength - i))
+  ##   vect <- c(vectA, vectC, vectG, vectT)
+  ##   vects <-cbind(vects, vect)
+  ## }  
+
+  df <- data.frame(vects, stringsAsFactors = FALSE)
+  df$strng <- apply(df, 1, function(x) {foo(x)})
+  
+  return(df)
+}
+
+
+
+applyfindhamming <- function(df, pattern, hammingdist) {
+  ## Call Hamming Distance function to see how many of the possible permutations are within the
+  ## specified Hamming Distance.
+  df$hamming <- sapply(df$strng, function(x) {findhamming(x, pattern)})
+  hamdist <- df[df$hamming <= hammingdist, ]
+  return(hamdist)
+}
+
+
+
+
+
+
+
+
+
+## findkmersmismatches <- function(string, k, d) {
+##   ## Find all kmers, allowing mismatches of up to Hamming Distance = d,
+##   ## within the given string.
+
+##   strLength <- nchar(string)
+##   maxcount <- 0
+##   maxpatterns <- vector('character')
+
+##   df <- genperms(k)
+
+##   for(i in 1:(strLength - k + 1)) {
+##     pattern <- substring(string, i, (i + k - 1))
+##     #print(pattern)
+##     #patterns <- permutestring2(pattern, d)$strng
+##     #patterns <- permutestring3(pattern, d)$strng
+##     #patterns <- permutestring4(df, pattern, d)$strng
+##     #patterns <- applyfindhamming(df, pattern, d)$strng
+##     ## Call Hamming Distance function to see how many of the possible permutations are within the
+##     ## specified Hamming Distance.
+##     df$hamming <- sapply(df$strng, function(x) {findhamming(x, pattern)})
+##     patterns <- df[df$hamming <= d, ]$strng
+
+##     #print(head(patterns))
+    
+##     for (j in 1:length(patterns)) {
+##       curpattern <- patterns[j]
+##       count <- countd(string, curpattern, d)[[1]]
+##       if (count == maxcount) {
+##         maxpatterns <- c(maxpatterns, curpattern)
+##       }
+##       else if(count > maxcount) {
+##         #print(paste("New count is ", count, sep=""))
+##         maxcount = count
+##         maxpatterns <- vector('character')
+##         maxpatterns <- c(maxpatterns, curpattern)
+##         #print(maxpatterns)
+##       }
+      
+##     } ## End for (j in 1:length(patterns))
+    
+##   } ## End for (i in 1:(strLength - k + 1))
+
+##   return(unique(maxpatterns))
+## }
+
