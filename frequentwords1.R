@@ -1,74 +1,16 @@
 
-## patterntonumber <- function(df, pattern) {
-##   ## Return the index of pattern
-##   return(df[df$strng == pattern,]$indx)
-## }
-
-
-symboltonumber <- function(symbol) {
-  ##
-  if(symbol == 'A')
-    return(0)
-  else if(symbol == 'C')
-    return(1)
-  else if(symbol == 'G')
-    return(2)
-  else if(symbol == 'T')
-    return(3)  
+patterntonumber <- function(df, pattern) {
+  ## Return the index of pattern
+  return(df[df$strng == pattern,]$indx)
 }
 
-patterntonumber <- function(pattern) {
-  ## 
-  if (pattern == "") {
-    return(0)
-  }
-    symbol <- substring(pattern, nchar(pattern), nchar(pattern))
-    pattern <- substring(pattern, 1, (nchar(pattern) - 1))
-    #patterntonumber(pattern)
-    return(4 * patterntonumber(pattern) + symboltonumber(symbol))
-}
-  
-
-## numbertopattern <- function(df, indx) {
-##   ## Return the pattern at index "indx"
-##   return(df$strng[indx + 1])
-## }
-
-
-
-quotient <- function(number, k) {
-  ## Returns the integer division value of num / k.
-  return(number %/% k)
-}
-
-remainder <- function(number, k) {
-  ## Returns the modulus of num / k.
-  return(number %% k)
+numbertopattern <- function(df, indx) {
+  ## Return the pattern at index "indx"
+  return(df$strng[indx + 1])
 }
 
 
-                     
-numbertopattern <- function(index, k) {
-  if(k == 1) {
-    return(numbertosymbol(index))
-  }
-  prefixindex <- quotient(index, 4)
-  r <- remainder(index, 4)
-  prefixpattern <- numbertopattern(prefixindex, (k - 1))
-  symbol <- numbertosymbol(r)
-  return(paste(prefixpattern, symbol, sep=""))
-}
 
-numbertosymbol <- function(index) {
-  if(index == 0)
-    return('A')
-  else if (index == 1)
-    return('C')
-  else if (index == 2)
-    return('G')
-  else if (index == 3)
-    return('T')
-}
 
 
 foo <- function(dfrow) {
