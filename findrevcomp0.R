@@ -6,8 +6,17 @@ findrevcomp <- function(inputSeq) {
   outputSeq = vector('character')
   lenInputSeq = nchar(inputSeq)
 
+  #splitInput <- strsplit(inputSeq,NULL)[[1]]
+  #print(splitInput)
+  #lenInputSeq = length(splitInput)
+  #print(lenInputSeq)
+  
   for(i in 1:lenInputSeq)
     {
+      #print(i)
+      #print(substring(splitInput[i], i, i+1))
+      #print(substring(inputSeq, i, i))
+
       if(substring(inputSeq, i, i) == 'A')
         outputSeq <- c(outputSeq, 'T')
       if(substring(inputSeq, i, i) == 'T')
@@ -16,9 +25,25 @@ findrevcomp <- function(inputSeq) {
         outputSeq <- c(outputSeq, 'C')
       if(substring(inputSeq, i, i) == 'C')
         outputSeq <- c(outputSeq, 'G')
+
+      
+      ## if(substring(splitInput[i], i, i) == 'A')
+      ##   outputSeq <- c(outputSeq, 'T')
+      ## if(substring(splitInput[i], i, i) == 'T')
+      ##   outputSeq <- c(outputSeq, 'A')
+      ## if(substring(splitInput[i], i, i) == 'G')
+      ##   outputSeq <- c(outputSeq, 'C')
+      ## if(substring(splitInput[i], i, i) == 'C')
+      ##   outputSeq <- c(outputSeq, 'G')
+
+      #print(outputSeq)
+      #rint(i)
     }
 
+  #print(outputSeq)
+  
   outputSeq <- paste(outputSeq, "", collapse='', sep='')
+
   outputSeq <- reversestring(outputSeq)
   print(outputSeq)
 

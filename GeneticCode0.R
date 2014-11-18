@@ -1,46 +1,43 @@
-findntsinstring <- function(text, pattern) {
-  nts <- findnucleotides(pattern)
-  for (i in 1:length(nts)) {
-    
-  }
-}
-
 findnucleotides <- function(aastring) {
   ## Given a string of amino acids, return vectors of possible corresponding
   ## nucleotides.
-
-  ## This is wrong.  It needs to keep the nucleotides together differently,
-  ## and come up with all combinations.  e.g. MA could match ATG with GCA
-  ## i.e. ATGGCA, or it could match up ATG with GCC, i.e. ATGGCC, etc.  Also
-  ## must handle the reverse complements. e.g. ATG reverse complement is CAT,
-  ## and GCA reverse complement is TGC, so another pattern to search is
-  ## CATTGC.  etc.  Fix it!
-  
-  #ntlist <- list()
-  ntvec <- vector('character')
+  #ntvec <- vector('character')
+  ntlist <- list()
   aavec <- strsplit(aastring,"")[[1]]
+
   codontable <- geneticcode()
+  #print(head(codontable))
+  #print(codontable)
+
+  #print(getnt("M", codontable))
+  #print(getnt("L", codontable))  
   
   for (i in 1:length(aavec))
     {
       nts <- vector('character')      
+      #print(codontable[codontable$singleletters == aavec[i],])
+      #print(aavec[i])
+      #if(aavec[i] %in% codontable$singleletters)
+      #  print("It's here.")
+      #indx <- match(aavec[i], codontable$singleletters, nomatch=-1)
       indices <- which(codontable$singleletters %in% aavec[i])
-
+      #print(indices)
       for (j in 1:length(indices)) {
         ## iterate through all the matches
-        ntmatch <- codontable$strng[indices[j]]
-        ntmatch <- gsub("U", "T", ntmatch)
-        #print(ntmatch)
-        #nts <- c(nts, ntmatch)
-        ntmatchrev <- findrevcomp(ntmatch)
-        nts <- c(nts, ntmatch, ntmatchrev)
+        #print(indices[j])
+        nts <- c(nts, codontable$strng[indices[j]])
+        #print(nts)
       }
-      #ntlist <- append(ntlist, nts)
-      ntvec <- c(ntvec, nts)
+      #print(nts)
+      ntlist <- append(ntlist, nts)
+      #nts <- vector('character')
+      #if (length(indices) > 0)
+        #ntvec <- cbind(ntvec, nts)
     }
 
-  #return(ntlist)
-  return(ntvec)
+  #print(str(ntvec))
+  #return(ntvec)
+  return(ntlist)
 }
 
 
@@ -107,12 +104,16 @@ geneticcode <- function() {
   ## Uses the alphabet A, C, T, U.
 
   options(stringsAsFactors=FALSE)
+  #singleletterabbrev <- c('K', 'N', 'K', 'N',
   singleletters <- vector('character')
 
   aminoacids <- as.data.frame(cbind(indx=0:63,strng=genperms(3)$strng))
+  #print(nrow(aminoacids))
   for (i in 1:nrow(aminoacids)) {
     nextpattern <- aminoacids$strng[i]
+    #print(nextpattern)
     singleletter <- getoneltrabbrev(nextpattern)
+    #print(singleletter)
     singleletters <- c(singleletters, singleletter)
   }
   aminoacids <- cbind(aminoacids, singleletters)
@@ -203,46 +204,6 @@ genperms <- function(k) {
   
   return(df)
 }
-
-
-
-findrevcomp <- function(inputSeq) {
-  ## Given a sequence, return the complementary strand (given in its order of 5' -> 3').
-  ## So, first find the complementary nucleotide for each nucleotide of the input strandSeq
-  ## and then reverse that string once it's built.
-
-  outputSeq = vector('character')
-  lenInputSeq = nchar(inputSeq)
-
-  for(i in 1:lenInputSeq)
-    {
-      if(substring(inputSeq, i, i) == 'A')
-        outputSeq <- c(outputSeq, 'T')
-      if(substring(inputSeq, i, i) == 'T')
-        outputSeq <- c(outputSeq, 'A')
-      if(substring(inputSeq, i, i) == 'G')
-        outputSeq <- c(outputSeq, 'C')
-      if(substring(inputSeq, i, i) == 'C')
-        outputSeq <- c(outputSeq, 'G')
-    }
-
-  outputSeq <- paste(outputSeq, "", collapse='', sep='')
-  outputSeq <- reversestring(outputSeq)
-  print(outputSeq)
-
-  return(outputSeq)
-}
-  
-reversestring <- function(inputString) {
-  ## Reverse an input string
-  splitInput <- strsplit(inputString,NULL)[[1]]
-  revSplit <- rev(splitInput)
-  outputString <- paste(revSplit,"",collapse='', sep='')
-  return(outputString)
-}
-
-
-
 
 
 
