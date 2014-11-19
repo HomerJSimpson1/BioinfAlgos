@@ -1,18 +1,26 @@
 findntsinstring <- function(text="", pattern, infname="C:/Users/petersj/Downloads/dataset_96_8.txt",
                             outfname="C:/Users/petersj/Downloads/output.txt", usefile=TRUE, writefile=TRUE) {
 
+##findntsinstring <- function(text, pattern)
+
   if(usefile)
     text <- readfiletostring(infname)
   nts <- findnucleotides(pattern)
 
+  #print(nts)
   ntpats <- vector('character')
   nummatches <- vector('numeric')
   result <- vector('character')
   
   for (i in 1:ncol(nts)) {
+    #print(nts[i])
     for (j in 1:nrow(nts)) {
+      #print(i)
+      #print(j)
+      #print(nts[j, i])
       ntpats <- c(ntpats, nts[j, i])
       nmatches <- findnummatches(text, nts[j,i])
+      #print(nmatches)
       nummatches <- c(nummatches, nmatches)
       if (nmatches > 0)
         {
@@ -23,10 +31,19 @@ findntsinstring <- function(text="", pattern, infname="C:/Users/petersj/Download
     }
   }
 
+  #match <- gregexpr(paste("(?=", pattern, ")", sep=""), text, perl=TRUE)
+  #nmatches <- findnummatches(text, pattern)
+  #if (n
+
   result <- trim(result)
+  
+  #print(result)
+  #printntpats)
   options(stringsAsFactors=FALSE)
   final <- as.data.frame(cbind(ntpats, nummatches))
   final$nummatches <- as.numeric(final$nummatches)
+  #return(cbind(ntpats, as.numeric(nummatches)))
+  #return(final)
 
   if(writefile)
     writestringtofile(outfname, result)
@@ -56,13 +73,16 @@ readfiletostring <- function(filename, usespace=FALSE) {
 
 writestringtofile <- function(filename, string) {
   ## Write a string to a file given by filename
+  #print(filename)
   if (is.vector(string))
     {
       string <- paste(string, "", sep=" ", collapse="")
+      #print(string)
     }
   fileConn<-file(filename)
   writeLines(c(string), fileConn)
   close(fileConn)
+
 }
 
 
@@ -71,7 +91,7 @@ writestringtofile <- function(filename, string) {
 
 findnummatches <- function(string, sequence) {
   match <- gregexpr(paste("(?=", sequence, ")", sep=""), string, perl=TRUE)
-
+  #print(match[[1]])
   if(match[[1]][1] == -1)
     nmatches <- 0
   else
@@ -97,6 +117,7 @@ findnucleotides <- function(aastring) {
   
   ntvec <- vector('character')
   fwd <- vector('character')
+  #rev <- vector('character')
   aavec <- strsplit(aastring,"")[[1]]
   codontable <- geneticcode()
   
@@ -109,13 +130,31 @@ findnucleotides <- function(aastring) {
         ## iterate through all the matches
         ntmatch <- codontable$strng[indices[j]]
         ntmatch <- gsub("U", "T", ntmatch)
+        print(ntmatch)
+        #ntmatchrev <- findrevcomp(ntmatch)
+        #print(ntmatchrev)
         fwd <- c(fwd, ntmatch)
+        #rev <- c(rev, ntmatchrev)
       }
+      #print(fwd)
+      #print(rev)
+      
+      #nts <- as.data.frame(cbind(fwd, rev))
       nts <- as.data.frame(fwd)
       names(nts) <- NULL
       fwd <- vector('character')
+      #rev <- vector('character')
+      #colnames(nts) <- c(paste('fwd', i, sep=""), paste('rev', i, sep=""))
       ntvec <- c(ntvec, nts)
-      }
+      #print(ntvec)
+    }
+
+  #print(ntvec)
+  #print(ntvec[1])
+  #print(ntvec[2])
+  #return(ntvec)
+
+  #print(unlist(ntvec))
 
   final <- makepermuts(ntvec)
   final$reverse <- getreversecomps(final$forward)
@@ -133,23 +172,64 @@ getreversecomps <- function(fwdvec) {
 
 makepermuts <- function(df) {
   ## Function that takes as input a vector and outputs a data frame that is the combination of
-  ## the forward elements. e.g. create all permutations of fwd1 elements and fwd2 elements and
-  ## fwd3 elements (if present), etc.
+  ## the forward and reverse elements.  The forward elements are found in the odd
+  ## numbered column vectors, and the reverse elements in the even numbered column
+  ## vectors.  e.g. create all permutations of fwd1 elements and fwd2 elements and
+  ## fwd3 elements (if present), etc.  Do the same for rev1, rev2, ....
   ## E.g. if fwd1="ATG" and fwd2 = "GCA GCC GCG GCT", then create a "forward" vector of
-  ## "ATGGCA", "ATGGCC", "ATGGCG", and "ATGGCT".
-  ## Then return the two vector (forward) as a data frame.
+  ## "ATGGCA", "ATGGCC", "ATGGCG", and "ATGGCT".  The reverse elements are added
+  ## in the reverse order.  So if rev1 = "CAT", rev2 = "TGC GGC CGC AGC", then return
+  ## a "reverse" vector of "TGCCAT", "GGCCAT", "CGCCAT", and "AGCCAT".
+  ## Return these two vectors (forward and reverse).
+
+  ## N.B. After going through all of this pain, it turns out the result is the same
+  ## if I just ran a "forward" vector and then called findrevcomp on each element of
+  ## that vector.  Grrr.
 
   forward <- vector('character')
+  #reverse <- vector('character')
   result <- vector('character')
+  
   numcols <- length(df)
+  ## No longer doing the reverse sequences here, so this is no longer valid.
+  ## Instead, just do the forward sequences and later call findrevcomp on each result in
+  ## the forward vector.
+  #if((numcols %% 2) != 0)
+  #  stop("Malformed data frame.  Aborting procedure.")
+
+  #print(numcols)
+  ## Merge all of the forward vectors
+  #for (i in 1:(numcols / 2)) {
+    ## Iterate through all of the odd numbered columns
+    #print(df[2 * i - 1])
+    #print(result)
+    #print(class(result))
+    #result <- mergevec(unlist(result), df[2 * i - 1])
+    #result <- mergevec(result, df[2 * i - 1])
+    #print(result)
+    #forward <- c(forward, result)
+  #}
   
   for (i in 1:numcols) {  
     ## Iterate through all of the columns    
     result <- mergevec(unlist(result), df[i])    
   }
   forward <- c(forward, result)
+  #print(forward)
+
+  ## result <- vector('character')
+  ## #print(seq((numcols/ 2), 1, -1))
   
+  ## ## Merge all of the reverse vectors
+  ## for (i in seq((numcols/ 2), 1, -1)) {
+  ##   ## Iterate through all of the odd numbered columns
+  ##   result <- mergevec(result, df[2 * i])
+  ## }    
+  ## reverse <- c(reverse, result)
+  #print(reverse)
+
   ## Return the result
+  #return(as.data.frame(cbind(forward, reverse)))
   return(as.data.frame(forward))
 }
 
@@ -166,10 +246,13 @@ mergevec <- function(vec1, vec2) {
 
   ## Check if vector1 is empty.
   if (length(vec1) == 0) {
+    #print("Vector 2 has zero length.")
     return(vec2)
+    #return(result)
   }   ## Check if vector2 is empty.
   else if (length(vec2) == 0) {
     return(vec1)
+    #return(result)
   }
 
   ## Create all possible combinations from the elements in each of the two vectors, or
@@ -184,6 +267,11 @@ mergevec <- function(vec1, vec2) {
   return(result)
 }
 
+
+
+## getnt <- function(aminoacid, codontable) {
+##   indx <- which(codontable$singleletters %in% aminoacid)
+## }
 
 
 findabbrev <- function(nucleotidestring) {
@@ -350,6 +438,83 @@ reversestring <- function(inputString) {
   outputString <- paste(revSplit,"",collapse='', sep='')
   return(outputString)
 }
+
+
+
+
+
+
+
+
+## callfindnt <- function(aastring) {
+##   ## Call findnucleotides function
+##   ## For some strange reason, I was unable to perform
+##   ## the following post-processing work within findnucleotides.
+##   ## So I wrapped it with this function.
+
+##   mylist <- findnucleotides(aastring)
+##   #ntlist[[1]][[1]] <- ntlist[[1]][[2]]
+##   ntlist[[1]][[1]] <- ntlist[[1]][[2]]
+##   ## # Now remove the entry at [[1]][[2]]
+##   ntlisttmp <- ntlist[[1]][[-2]]
+##   ## # And clean it up to have the list I want
+##   ntlist <- list(ntlisttmp, ntlist[[-1]])
+
+##   return(ntlist)
+## }
+  
+
+## findnucleotides <- function(aastring) {
+##   ## Given a string of amino acids, return vectors of possible corresponding
+##   ## nucleotides.
+
+##   ## This is wrong.  It needs to keep the nucleotides together differently,
+##   ## and come up with all combinations.  e.g. MA could match ATG with GCA
+##   ## i.e. ATGGCA, or it could match up ATG with GCC, i.e. ATGGCC, etc.  Also
+##   ## must handle the reverse complements. e.g. ATG reverse complement is CAT,
+##   ## and GCA reverse complement is TGC, so another pattern to search is
+##   ## CATTGC.  etc.  Fix it!
+  
+##   ntlist <- list()
+##   #ntvec <- vector('character')
+##   aavec <- strsplit(aastring,"")[[1]]
+##   codontable <- geneticcode()
+  
+##   for (i in 1:length(aavec))
+##     {
+##       nts <- vector('character')      
+##       indices <- which(codontable$singleletters %in% aavec[i])
+
+##       for (j in 1:length(indices)) {
+##         ## iterate through all the matches
+##         ntmatch <- codontable$strng[indices[j]]
+##         ntmatch <- gsub("U", "T", ntmatch)
+##         #print(ntmatch)
+##         #nts <- c(nts, ntmatch)
+##         ntmatchrev <- findrevcomp(ntmatch)
+##         nts <- c(nts, ntmatch, ntmatchrev)
+##       }
+##       #ntlist <- append(ntlist, nts)
+##       ntlist <- list(ntlist, nts)
+##       # Remove the empty list (list()) at the head of the list
+##       # Replace it with the first entry, which is at [[1]][[2]]
+##       #ntlist[[1]][[1]] <- ntlist[[1]][[2]]
+##       #print(ntlist[[1]][2])
+##       #temp <- ntlist[[1]]
+##       #print(temp[2][[1]])
+##       ## ntlist[[1]][[1]] <- ntlist[[1]][[2]]
+##       ## # Now remove the entry at [[1]][[2]]
+##       #ntlisttmp <- ntlist[[1]][[-2]]
+##       ## # And clean it up to have the list I want
+##       #ntlist <- list(ntlisttmp, ntlist[[-1]])
+##       #ntvec <- c(ntvec, nts)
+##     }
+
+##   return(ntlist)
+##   #return(ntvec)
+## }
+
+
 
 
 
