@@ -1,5 +1,5 @@
 findntsinstring <- function(text, pattern, infname="C:/Users/petersj/Downloads/dataset_96_8.txt",
-                            outfname="C:/Users/petersj/Downloads/output.txt", usefile=TRUE) {
+                            outfname="C:/Users/petersj/Downloads/output.txt", usefile=TRUE, writefile=TRUE) {
 
 ##findntsinstring <- function(text, pattern)
 
@@ -7,6 +7,7 @@ findntsinstring <- function(text, pattern, infname="C:/Users/petersj/Downloads/d
     text <- readfiletostring(infname)
   nts <- findnucleotides(pattern)
 
+  #print(nts)
   ntpats <- vector('character')
   nummatches <- vector('numeric')
   result <- vector('character')
@@ -36,7 +37,7 @@ findntsinstring <- function(text, pattern, infname="C:/Users/petersj/Downloads/d
 
   result <- trim(result)
   
-  print(result)
+  #print(result)
   #printntpats)
   options(stringsAsFactors=FALSE)
   final <- as.data.frame(cbind(ntpats, nummatches))
@@ -44,7 +45,8 @@ findntsinstring <- function(text, pattern, infname="C:/Users/petersj/Downloads/d
   #return(cbind(ntpats, as.numeric(nummatches)))
   #return(final)
 
-  writestringtofile(outfname, result)
+  if(writefile)
+    writestringtofile(outfname, result)
   
   return(result)
 }
@@ -71,11 +73,11 @@ readfiletostring <- function(filename, usespace=FALSE) {
 
 writestringtofile <- function(filename, string) {
   ## Write a string to a file given by filename
-  print(filename)
+  #print(filename)
   if (is.vector(string))
     {
       string <- paste(string, "", sep=" ", collapse="")
-      print(string)
+      #print(string)
     }
   fileConn<-file(filename)
   writeLines(c(string), fileConn)
@@ -140,6 +142,7 @@ findnucleotides <- function(aastring) {
       ntvec <- c(ntvec, nts)
     }
 
+  #print(ntvec)
   #print(ntvec[1])
   #print(ntvec[2])
   #return(ntvec)
@@ -148,13 +151,14 @@ findnucleotides <- function(aastring) {
 
   final <- makepermuts(ntvec)
   #print(final)
+  return(final)
 }
 
 
 
 
 makepermuts <- function(df) {
-  ## Function that takes as input a vector and outputs a data frame that is  the combination of
+  ## Function that takes as input a vector and outputs a data frame that is the combination of
   ## the forward and reverse elements.  The forward elements are found in the odd
   ## numbered column vectors, and the reverse elements in the even numbered column
   ## vectors.  e.g. create all permutations of fwd1 elements and fwd2 elements and
@@ -177,14 +181,20 @@ makepermuts <- function(df) {
   if((numcols %% 2) != 0)
     stop("Malformed data frame.  Aborting procedure.")
 
+  #print(numcols)
   ## Merge all of the forward vectors
   for (i in 1:(numcols / 2)) {
     ## Iterate through all of the odd numbered columns
-    result <- mergevec(result, df[2 * i - 1])
+    #print(df[2 * i - 1])
+    #print(result)
+    #print(class(result))
+    result <- mergevec(unlist(result), df[2 * i - 1])
+    #result <- mergevec(result, df[2 * i - 1])
     #print(result)
     #forward <- c(forward, result)
   }
   forward <- c(forward, result)
+  #print(forward)
 
   result <- vector('character')
   #print(seq((numcols/ 2), 1, -1))
