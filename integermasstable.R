@@ -1,11 +1,19 @@
 integermasstable <- function() {
   proteins <- c('G', 'A', 'S', 'P', 'V', 'T', 'C', 'I', 'L', 'N', 'D', 'K', 'Q', 'E', 'M', 'H', 'F', 'R', 'Y', 'W')
-  intmass <- c(57, 71, 87, 97, 99, 101, 103, 113, 113, 114, 115, 128, 128, 129, 131, 137, 147, 156, 163, 186)
+  intmass <- as.integer(c(57, 71, 87, 97, 99, 101, 103, 113, 113, 114, 115, 128, 128, 129, 131, 137, 147, 156, 163, 186))
 
-  print(length(proteins))
-  print(length(intmass))
+  #str(intmass)
 
-  return(data.frame(cbind(proteins, intmass)))
+  #print(length(proteins))
+  #print(length(intmass))
+
+  #options(stringsAsFactors = FALSE)
+  df <- data.frame(cbind(proteins, intmass), stringsAsFactors=FALSE)
+  #print(levels(df$intmass))
+  #df$intmass <- as.numeric(levels(df$intmass))[df$intmass]
+  df$intmass <- as.integer(df$intmass)
+  #return(data.frame(cbind(proteins, intmass)))
+  return(df)
   
 ## G 57
 ## A 71
