@@ -1,5 +1,6 @@
 runlinearspectrum <- function(peptide) {
   imt <- integermasstable()
+  #print(head(imt))
   peptide <- strsplit(peptide,"")[[1]]
   linearspec <- linearspectrum(peptide, imt$proteins, imt$intmass)
   
@@ -15,28 +16,52 @@ linearspectrum <- function(peptide, aminoacid, aminoacidmass) {
   ## parameter is a vector of amino acid masses.  This is
   ## structured so that for all i in aminoacid, the mass of aminoacid[i]
   ## equals aminoacidmass[i].
+  #print(peptide)
+  #prefixmass <- vector('numeric')
+  #prefixmass <- c(prefixmass, 0)
   prefixmass <- rep(0,1)  
   
   for (i in 1:length(peptide)) {
+    #print(length(peptide))
+    #print(peptide[i])
     for (j in 1:20) {
+      #print(aminoacid[j])
       if(aminoacid[j] == peptide[i]) {
+        #print(aminoacid[j])
+        #print(peptide[i])
+        #print(prefixmass[i-1])
+        #print(aminoacidmass[j])
+        #print(is.numeric(prefixmass[i]))
+        #if (!is.na(prefixmass[i]))
+        #prefixmass <- c(prefixmass, prefixmass[i-1] + aminoacidmass[j])
+        
         if (i > 1)          
             prefixmass <- c(prefixmass, prefixmass[i] + aminoacidmass[j])
         else
            prefixmass <- c(prefixmass, aminoacidmass[j])
+
+        #print(prefixmass[i+1])
       }
     }
   }
 
+  #print(prefixmass)
+  
   linspec <- rep(0,1)
+  #print(linspec)
+  #print(length(peptide) - 1)
+  #for (i in 0:(length(peptide)-1)) {
   for (i in 1:length(peptide)) {
     for (j in (i + 1):(length(peptide) + 1)) {
+      #print(prefixmass[j] - prefixmass[i])
       linspec <- c(linspec, prefixmass[j] - prefixmass[i])
     }
   }
 
   return(sort(linspec))
 }
+
+
 
 
 

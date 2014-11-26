@@ -1,15 +1,15 @@
-runlinearspectrum <- function(peptide) {
+runcyclicspectrum <- function(peptide) {
   imt <- integermasstable()
   peptide <- strsplit(peptide,"")[[1]]
-  linearspec <- linearspectrum(peptide, imt$proteins, imt$intmass)
+  cyclicspec <- cyclicspectrum(peptide, imt$proteins, imt$intmass)
   
-  return(linearspec)
+  return(cyclicspec)
 }
 
 
 
 
-linearspectrum <- function(peptide, aminoacid, aminoacidmass) {
+cyclicspectrum <- function(peptide, aminoacid, aminoacidmass) {
   ## peptide is the peptide for which we are determining the sequence
   ## aminoacid is a vector of amino acids, and the aminoacidmass
   ## parameter is a vector of amino acid masses.  This is
@@ -27,15 +27,19 @@ linearspectrum <- function(peptide, aminoacid, aminoacidmass) {
       }
     }
   }
+  peptidemass <- prefixmass[length(prefixmass)]
 
-  linspec <- rep(0,1)
+  cyclspec <- rep(0,1)
   for (i in 1:length(peptide)) {
     for (j in (i + 1):(length(peptide) + 1)) {
-      linspec <- c(linspec, prefixmass[j] - prefixmass[i])
+      cyclspec <- c(cyclspec, prefixmass[j] - prefixmass[i])
+
+      if (i > 1 && j < (length(peptide) + 1))
+        cyclspec <- c(cyclspec, (peptidemass - (prefixmass[j] - prefixmass[i])))
     }
   }
 
-  return(sort(linspec))
+  return(sort(cyclspec))
 }
 
 
