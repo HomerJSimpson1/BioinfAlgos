@@ -23,10 +23,20 @@ cyclopeptideseq <- function(spectrum) {
     {
       ## I believe expand (the branch step) is working correctly.
       peptides <- expand(peptides, imt$proteins)
+      pepvec <- strsplit(peptides)
       
       ## Now add the bound step
-      for (i in 1:length(peptides)) {
-        if(imt$intmass
+      for (i in 1:length(pepvec)) {
+        indx <- match(pepvec[i], imt$proteins)
+
+
+        ## Need to define parentmass here!
+        
+        
+        if(imt$intmass[indx] == parentmass(spectrum))
+          {
+            ## Add code here
+          }
       }
       
       ## Just added this here for now until I determine that I won't create an
