@@ -16,6 +16,9 @@ cyclopeptideseq <- function(spectrum) {
   ##              else if Peptide is not consistent with Spectrum
   ##                  remove Peptide from Peptides
 
+  MAX_REPS <- 2
+  #MAX_REPS <- 10  
+  #MAX_REPS <- 1000000  
   imt <- integermasstable()
   nreps <- 0
   peptides <- rep("",1)
@@ -23,26 +26,29 @@ cyclopeptideseq <- function(spectrum) {
     {
       ## I believe expand (the branch step) is working correctly.
       peptides <- expand(peptides, imt$proteins)
-      pepvec <- strsplit(peptides)
+      pepvec <- strsplit(peptides, "")
+
+      print(pepvec)
       
-      ## Now add the bound step
-      for (i in 1:length(pepvec)) {
-        indx <- match(pepvec[i], imt$proteins)
+##       ## Now add the bound step
+##       for (i in 1:length(pepvec)) {
+##         indx <- match(pepvec[i], imt$proteins)
 
 
-        ## Need to define parentmass here!
+##         ## Need to define parentmass here!
         
         
-        if(imt$intmass[indx] == parentmass(spectrum))
-          {
-            ## Add code here
-          }
-      }
+##         if(imt$intmass[indx] == parentmass(spectrum))
+##           {
+##             ## Add code here
+##           }
+##       }
       
       ## Just added this here for now until I determine that I won't create an
       ## infinite loop using the loop condition (length(peptides) > 0)
       nreps <- nreps + 1
-      if (nreps > 1000000)
+      print(nreps)
+      if (nreps > MAX_REPS)
         stop("Too many repetitions.  Exiting loop to prevent an infinite loop")
     }
 }
