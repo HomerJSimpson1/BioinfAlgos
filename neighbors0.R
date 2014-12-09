@@ -1,65 +1,3 @@
-neighbors1 <- function(pattern, d) {
-  ## Coursera Bioinformatic Algorithms Part 1 Class
-  ## Implements the "Neighbors" function provided in the
-  ## interactive text.  See "Charging Station: Generating the
-  ## Neighborhood of a String"
-
-  alphabet = c('A', 'C', 'G', 'T')
-  if (d == 0)
-    {
-      print("d = 0")
-      return(pattern)
-    }
-  if (nchar(pattern) == 1)
-      return(alphabet)
-  neighborhood <- vector('character')
-  suffixneighbors <- vector('character')
-  suffixneighbors <- c(neighbors1(suffix(pattern), d), suffixneighbors)  
-
-  #print(suffixneighbors)
-  
-  for (i in 1:length(suffixneighbors)) {
-    text <- suffixneighbors[i]
-    sufx <- suffix(pattern)
-    ham <- findhamming(sufx, text)
-    #print(ham)
-    #if (findhamming(sufx, text) < d)
-    if (ham < d)      
-      {
-        #print(paste("Value of text is currently:", text, sep=" "))
-        #print(paste("Hamming distance of ", sufx, "is", ham, sep=" "))
-        for (j in 1:length(alphabet)) {
-          ##print(alphabet[j])
-          ##nextadd <- paste(alphabet[j], text, sep="")
-          ##if (length(nextadd == length(pattern)
-          ##if (findhamming(nextadd, pattern) == d)
-          ##  neighborhood <- c(paste(alphabet[j], text, sep=""), neighborhood)
-          neighborhood <- c(paste(alphabet[j], text, sep=""), neighborhood)
-        } ## end for (j in 1:nchar(sufx))
-        
-      } ## end if (findhamming())
-    else
-      {
-        #print(paste("Neighborhood is currently: ", neighborhood, sep=""))
-        firstsym <- firstsymbol(pattern)
-        nextadd <- paste(firstsym, text, sep="")
-        print(paste("Next AA to add=", nextadd, "and the hamming distance from pattern", pattern, "is", findhamming(nextadd, pattern), sep=" "))
-        if (findhamming(nextadd, pattern) == d)
-          neighborhood <- c(nextadd, neighborhood)
-        ## neighborhood <- c(paste(firstsym, text, sep=""), neighborhood)
-      } ## end else
-   
-  }## end for (i in 1:length())
-
-  return(neighborhood)
-  
-} ## end neighbors1 function
-
-
-
-
-
-
 neighbors <- function(pattern, d) {
   ## Coursera Bioinformatic Algorithms Part 1 Class
   ## Implements the "Neighbors" function provided in the
@@ -70,24 +8,34 @@ neighbors <- function(pattern, d) {
   if (d == 0)
     return(pattern)
   if (nchar(pattern) == 1)
+    {
+      print("Pattern length = 1")
+      #return(c('A', 'C', 'G', 'T'))
       return(alphabet)
+    }
   neighborhood <- vector('character')
   suffixneighbors <- vector('character')
+  #suffixneighbors <- c(suffixneighbors, neighbors(suffix(pattern), d))
   suffixneighbors <- c(neighbors(suffix(pattern), d), suffixneighbors)  
-
+  #print(suffixneighbors)
+  #suffixneighbors <- neighbors(suffix(pattern), d)
   for (i in 1:length(suffixneighbors)) {
     text <- suffixneighbors[i]
     sufx <- suffix(pattern)
     if (findhamming(sufx, text) < d)
       {
+        #sufxvec <- strsplit(sufx, "")[[1]]
         for (j in 1:length(alphabet)) {
-          neighborhood <- c(paste(alphabet[j], text, sep=""), neighborhood)                    
+          #neighborhood <- c(neighborhood, paste(alphabet[j], text, sep=""))
+          neighborhood <- c(paste(alphabet[j], text, sep=""), neighborhood)          
+          
         } ## end for (j in 1:nchar(sufx))
         
       } ## end if (findhamming())
     else
       {
         firstsym <- firstsymbol(pattern)
+        #neighborhood <- c(neighborhood, paste(firstsym, text, sep=""))
         neighborhood <- c(paste(firstsym, text, sep=""), neighborhood)        
       } ## end else
     
@@ -96,7 +44,6 @@ neighbors <- function(pattern, d) {
   return(neighborhood)
   
 } ## end neighbors function
-
 
 
 
