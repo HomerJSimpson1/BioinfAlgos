@@ -1,5 +1,5 @@
-overlapgraph <- function(patterns) {
-  ##
+debruijn <- function(k, text) {
+  ## Solve the DeBruijn Graph from a string Problem
   numpatterns <- length(patterns)
 
   patterns <- sort(patterns)
