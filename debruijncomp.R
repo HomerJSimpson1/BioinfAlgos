@@ -19,16 +19,31 @@ debruijncomp <- function(patterns) {
     suffixes[i] <- getkminus1(patterns[i], "last")    
   }
 
-  ## Create a vector that combines all unique prefixes and suffixes
+##   ## Create a vector that combines all unique prefixes and suffixes
   uniquepresuf <- unique(c(prefixes, suffixes))
   #return(uniquepresuf)
 
-  ## Now walk the "patterns" vector and connect prefixes with suffixes to form the adjacency lists
-  for (i in 1:numpatterns) {
-    
-  }
-  
+##   ## Now walk the "patterns" vector and connect prefixes with suffixes to form the adjacency lists
+##   for (i in 1:numpatterns) {
+##     suf <- suffixes[i]
+##     if (suf == 
+##   }
 
+  adjlist <- vector(mode='list', length=length(uniquepresuf))
+  
+  for (i in 1:length(uniquepresuf)) {
+  #for (i in 1:numpatterns) {
+    temp <- vector('character') 
+    #for (j in 1:length(uniquepresuf)) {
+    for (j in 1:numpatterns) {
+      if (uniquepresuf[i] == prefixes[j]) {
+        temp <- c(temp, suffixes[j])
+      }
+    }
+    adjlist[[i]] <- c(adjlist[[i]], temp)
+  }
+
+  print(paste(adjlist, "", sep="", collapse=", "))
   
 
   ## adjacencylist <- vector(mode='list', length=numpatterns)
