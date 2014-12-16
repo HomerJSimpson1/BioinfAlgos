@@ -56,14 +56,17 @@ eulerpath <- function(fname="eulersampleinput.txt") {
   ## currentnode holds the randomly selected start node.
   currentnode <- runif(1:numnodes)
 
-  while(nrow(edges[edges$visited==FALSE,]) > 0) {
+  while(nrow(edges[edges$Visited==FALSE,]) > 0) {
     ## While there are edges that have not yet been visited...
-    currentnodeout <- edges[edges$node==currentnode,]
+    currentnodeout <- edges[edges$Node==currentnode,]
     
-    if(nrow(currentnodeout[currentnodeout$visited==FALSE]) > 0) {
+    if(nrow(currentnodeout[currentnodeout$Visited==FALSE]) > 0) {
       ## if there are unvisited outbound edges from the node
       currentnode <- currentnodeout$Out
-    
+      for (i in 1:length(currentnode)) {
+        edges
+        ## currentnodeout$Visited <- TRUE
+      }
     } ## end if(nrow(currentnodeout...))
     else {
       ## then there are no unvisited outbound edges from the
