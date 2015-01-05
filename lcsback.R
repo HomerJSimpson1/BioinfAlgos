@@ -1,15 +1,19 @@
 lcsback <- function(v, w) {
   ## Input: 2 strings
-  ## Output: The path through the graph creating the
+  ## Output: The path through the graph creating a
   ## longest common subsequence.
 
-  vlen <- nchar(v)
-  wlen <- nchar(w)  
-  BIGINT <- 10000000
+  vlen <- nchar(v)     ## Length of string v
+  wlen <- nchar(w)     ## Length of string w
+  BIGINT <- 10000000   ## Constant used to represent infinity
 
+  ## Convert the strings v and w into vectors of characters
+  ## vvec and wvec.
   vvec <- strsplit(v, "")[[1]]
   wvec <- strsplit(w, "")[[1]]
 
+  ## Create empty matrices for s and backtrack
+  ## s is initialized to negative infinity
   s <- matrix(-BIGINT, nrow = (vlen + 1), ncol = (wlen + 1))
   backtrack <- matrix(, nrow = (vlen + 1), ncol = (wlen + 1))
 
