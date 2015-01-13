@@ -18,9 +18,15 @@ greedysorting <- function(Pstring) {
   P <- readP(Pstring)
 
   fname <- "greedy.txt"
-
+  #fcon <- file(fname)
+  
   ## aprevdist = Approximate Reversal Distance
   apprevdist <- 0
+  #P_output <- paste(P, "\n", sep="")
+  #printP(P, fcon)
+
+  ## No - don't include the input as the first line of the output.
+  #printP(P, fname)  
 
   plen <- length(P)
   for (k in 1:plen) {
@@ -55,20 +61,37 @@ greedysorting <- function(Pstring) {
         P[left] = - P[left]
       }
       
+      #P_output <- paste(P_output, P, "\n", sep="")
       apprevdist <- apprevdist + 1
+      #print(P)
+      #printP(P, fcon)
       printP(P, fname)      
     } ## end if (abs(P[k]) != k)
 
     if (P[k] == -k) {
+      #print(k)
+      #print(P[k])
       P[k] = k
+      #print(k)
+      #print(P[k])
       apprevdist <- apprevdist + 1
+      #print(P)
+      #printP(P, fcon)
       printP(P, fname)      
     } ## end if (P[k] == -k])
     
   } ## end for (k in 1:plen)
 
+  #print(paste("Approx Reversal Distance = ", apprevdist, sep = ""))
+  #print(P)
+  #return(P_output)
+
+  ## Close the file connection
+  #close(fcon)
+  
   return(apprevdist)
 }
+
 
 
 
@@ -77,13 +100,50 @@ printP <- function(P, fname) {
   nums <- paste(sprintf("%+d", P), "", collapse="")
   trimd <- substr(nums, 1, nchar(nums) - 1)
   strOut <- paste("(", trimd, ")", sep="")
+  #print(strOut)
+
   write(strOut, fname, append=TRUE)
+
 }
+
 
 
 
 readP <- function(input) {
   ## Convert input into a vector
-  temp <- as.integer(strsplit(substr(input, 2, nchar(input) - 1), " ")[[1]])  
+
+##   temp <- substr(input, 2, nchar(input) - 1)
+##   temp1 <- strsplit(temp, " ")[[1]]
+##   temp2 <- as.integer(temp1)
+
+  temp <- as.integer(strsplit(substr(input, 2, nchar(input) - 1), " ")[[1]])
+  
   return(temp)
 }
+
+
+
+
+
+
+## printP <- function(P, fcon) {
+##   ## Print the P vectorlines to a file
+##   nums <- paste(sprintf("%+d", P), "", collapse="")
+##   trimd <- substr(nums, 1, nchar(nums) - 1)
+##   strOut <- paste("(", trimd, ")", sep="")
+##   print(strOut)
+
+##   writeLines(strOut, fcon)
+
+  
+## ##   for (i in 1:length(P)) {
+## ##     str <- sprintf("%+d", P)
+    
+## ##   }
+
+
+## }
+
+
+
+
