@@ -155,3 +155,33 @@ comparevec <- function(vec1, vec2) {
   
   return(length(noteq))
 }
+
+
+
+
+
+readP <- function(input) {
+  ## Convert input into a vector
+  temp <- as.integer(strsplit(substr(input, 2, nchar(input) - 1), " ")[[1]])  
+  return(temp)
+}
+
+
+
+printP <- function(P, fname="", tofile=TRUE, showsign=TRUE) {
+  ## Print the P vectorlines to a file
+  if(showsign) {
+    nums <- paste(sprintf("%+d", P), "", collapse="")
+    trimd <- substr(nums, 1, nchar(nums) - 1)
+  }
+  else {
+    nums <- paste(sprintf("%d", P), "", collapse="")
+    trimd <- substr(nums, 1, nchar(nums) - 1)
+  }
+  strOut <- paste("(", trimd, ")", sep="")
+    
+  if (tofile)
+    write(strOut, fname, append=TRUE)
+  else
+    print(strOut)
+}
