@@ -35,6 +35,6 @@ splitchroms <- function(strgenome) {
   chroms <- strsplit(strgenome, ")")[[1]]
   chroms1 <- sapply(chroms, paste, ")", sep="")
   chroms1 <- unname(chroms1)
-  
+  ##print(chroms1)  
   return(chroms1)
 }

@@ -24,6 +24,7 @@ graphtogenome <- function(genomegraph) {
 
   } ## end for (i in 1:length(genomevec))
 
+  print(mylist)
 
   P <- ""
   for (i in 1:length(mylist)) {
@@ -46,7 +47,7 @@ splitchroms <- function(strgenome) {
   chroms1 <- sapply(chroms, paste, ")", sep="")
   chroms1[length(chroms1)] <- substr(chroms1[length(chroms1)], 1, nchar(chroms1[length(chroms1)]) - 1)
   chroms1 <- unname(chroms1)
-  
+  ##print(chroms1)  
   return(chroms1)
 }
 
@@ -90,8 +91,10 @@ readP <- function(input) {
 printP <- function(P, fname="", tofile=TRUE, showsign=TRUE) {
   ## Print the P vectorlines to a file
   if(showsign) {
+    print(P)
     nums <- paste(sprintf("%+d", P), "", collapse="")
     trimd <- substr(nums, 1, nchar(nums) - 1)
+    print(trimd)
   }
   else {
     nums <- paste(sprintf("%d", P), "", collapse="")
